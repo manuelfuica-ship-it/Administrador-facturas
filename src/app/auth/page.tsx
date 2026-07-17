@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginUser, registerUser } from '@/api/supabase-auth';
+import { loginUser, registerUser } from '@/api/supabase-auth-v2';
 
 export default function AuthPage() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function AuthPage() {
 
     if (result.success) {
       setSuccess('✅ Ingreso exitoso. Redirigiendo...');
-      setTimeout(() => router.push('/facturas'), 1500);
+      setTimeout(() => router.push('/select-company'), 1500);
     } else {
       setError(result.error || 'Error de login');
     }

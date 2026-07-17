@@ -1,5 +1,30 @@
 # Guía de Despliegue - DTE Chile App
 
+## Pre-requisitos
+
+### 1. Supabase Setup
+
+**Crear proyecto Supabase:**
+
+1. Ir a https://app.supabase.com
+2. Crear nuevo proyecto
+3. Esperar a que se provisione (5-10 min)
+4. En **SQL Editor**, ejecutar:
+   - `supabase-migrate-v1-to-v2.sql` (crear schema)
+   - `supabase-fix-rls.sql` (agregar políticas)
+
+5. Copiar credenciales en Settings → API:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### 2. BaseAPI (Opcional)
+
+- Registrarse en https://baseapi.cl
+- Obtener API key
+- Configurar en variables de entorno
+
+---
+
 ## Opciones de Despliegue
 
 ### 1. Vercel (Recomendado para Next.js)
@@ -9,20 +34,61 @@
 - HTTPS por defecto
 - Escalabilidad automática
 - Free tier disponible
+- Integración nativa con Next.js 14
 
 **Pasos:**
 
 1. Crear cuenta en https://vercel.com
+2. Conectar repositorio GitHub: https://github.com/manuelfuica-ship-it/Administrador-facturas
+3. Vercel detectará Next.js automáticamente
+4. Configurar variables de entorno en Vercel Dashboard → Settings → Environment Variables:
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://jxvzwidkatsnnmgonrhg.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_568Cg26wuVe4zfIr_bn9PQ_3T-ZxkL5
+
+# BaseAPI (Obtener key en https://baseapi.cl)
+NEXT_PUBLIC_BASEAPI_URL=https://api.baseapi.cl/v1
+BASEAPI_API_KEY=<tu_key_aqui>
+
+# Sesión
+NEXT_PUBLIC_SESSION_TIMEOUT=1800000
+SESSION_SECRET=<generar_string_aleatorio_32_caracteres>
+```
+
+5. Deploy automático se activa con cada push a `main`
+
+**Comando para generar SESSION_SECRET:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### 2. Netlify (Alternativa)
+
+**Ventajas:**
+- Free tier generoso
+- Fácil configuración
+- Buena para sitios estáticos
+
+**Pasos:**
+
+1. Crear cuenta en https://netlify.com
 2. Conectar repositorio GitHub
-3. Configurar variables de entorno en Vercel Dashboard:
-   - `NEXT_PUBLIC_BASEAPI_URL`
-   - `BASEAPI_API_KEY`
-   - `SESSION_SECRET`
-   - `NODE_ENV=production`
+3. Seleccionar: Build command: `npm run build` y Publish directory: `.next`
+4. Configurar variables de entorno en Netlify Dashboard → Build & Deploy → Environment:
 
-4. Deploy automático se activa con cada push a `main`
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+NEXT_PUBLIC_BASEAPI_URL=...
+BASEAPI_API_KEY=...
+SESSION_SECRET=...
+```
 
-### 2. Railway
+5. Deploy automático al hacer push a `main`
+
+### 3. Railway
 
 **Ventajas:**
 - PostgreSQL/SQLite incluidos

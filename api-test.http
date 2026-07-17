@@ -1,0 +1,69 @@
+### DTE Chile App - API Test Collection
+### Use this file with VS Code REST Client extension
+
+@baseUrl = http://localhost:3000/api
+@baseApiUrl = https://api.baseapi.cl/v1
+@apiKey = your_baseapi_api_key_here
+@token = your_token_here
+
+### Local API - Generate PDF
+POST {{baseUrl}}/generate-pdf
+Content-Type: application/json
+
+{
+  "tipoDTE": 33,
+  "folio": 12345,
+  "fechaEmision": "2026-07-16",
+  "formaPago": 1,
+  "rutEmisor": "12345678-9",
+  "razonSocialEmisor": "Proveedor SPA",
+  "giroEmisor": "Comercio al por mayor",
+  "direccionEmisor": "Calle Principal 123",
+  "comunaEmisor": "Santiago",
+  "rutReceptor": "87654321-0",
+  "razonSocialReceptor": "Mi Empresa LTDA",
+  "items": [
+    {
+      "nroLinea": 1,
+      "nombreItem": "Producto A",
+      "cantidad": 2,
+      "unidad": "UN",
+      "precioUnitario": 50000,
+      "montoItem": 100000
+    }
+  ],
+  "montoNeto": 100000,
+  "tasaIVA": 19,
+  "iva": 19000,
+  "montoTotal": 119000,
+  "ted": "<TED>...</TED>"
+}
+
+### BaseAPI - Authenticate
+POST {{baseApiUrl}}/auth
+Content-Type: application/json
+
+{
+  "rut": "12345678-9",
+  "clave": "your_sii_password"
+}
+
+### BaseAPI - Get DTE List (requires token)
+GET {{baseApiUrl}}/dte/recibidos?periodo=2026-07
+Authorization: Bearer {{token}}
+X-Api-Key: {{apiKey}}
+
+### BaseAPI - Get DTE XML (requires token)
+GET {{baseApiUrl}}/dte/recibidos/12345
+Authorization: Bearer {{token}}
+X-Api-Key: {{apiKey}}
+
+### BaseAPI - Get Contributor Data (requires token)
+GET {{baseApiUrl}}/contribuyente/datos-receptor?rut=12345678-9
+Authorization: Bearer {{token}}
+X-Api-Key: {{apiKey}}
+
+### BaseAPI - Get RCV (Registro de Compras) (requires token)
+GET {{baseApiUrl}}/rcv?periodo=2026-07
+Authorization: Bearer {{token}}
+X-Api-Key: {{apiKey}}

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { authService } from '@/api/auth';
-import { getDTEXml } from '@/api/dte';
+import { getCurrentUser, logoutUser } from '@/api/supabase-auth-v2';
+import { dteSupabaseService } from '@/api/dte-supabase';
 import { DTE } from '@/types/dte';
 import { parseXmlDte, validateDte } from '@/parser/xmlParser';
 import { MOCK_DTE_DETAIL } from '@/utils/mockData';
@@ -11,7 +11,6 @@ import { MOCK_DTE_DETAIL } from '@/utils/mockData';
 export default function FacturaDetailPage({ params }: { params: { folio: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const rutEmisor = searchParams.get('rut');
 
   const [dte, setDte] = useState<DTE | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,19 +24,30 @@ export default function FacturaDetailPage({ params }: { params: { folio: string 
       return;
     }
 
-    if (!authService.isAuthenticated()) {
-      router.push('/');
+    checkAuthAndFetch();
+  }, []);
+
+  const checkAuthAndFetch = async () => {
+    const userResult = await getCurrentUser();
+
+    if (!userResult.success) {
+      router.push('/auth');
       return;
     }
 
     fetchDTE();
-  }, []);
+  };
 
   const fetchDTE = async () => {
     setLoading(true);
     setError('');
 
-    const xmlResult = await getDTEXml(parseInt(params.folio));
+    const companyId = typeof window !== 'undefined' ? sessionStorage.getItem('selectedCompanyId') : null;
+
+    const xmlResult = await dteSupabaseService.getDTEXml(
+      parseInt(params.folio),
+      companyId || ''
+    );
 
     if (!xmlResult.success || !xmlResult.data) {
       setError(xmlResult.error || 'Error al cargar la factura');
@@ -96,6 +106,11 @@ export default function FacturaDetailPage({ params }: { params: { folio: string 
     } finally {
       setDownloading(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await logoutUser();
+    router.push('/auth');
   };
 
   const handleDownloadXML = async () => {

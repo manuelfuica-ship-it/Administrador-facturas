@@ -125,25 +125,56 @@ export async function loginUser(
       };
     }
 
-    // 3. Obtener empresas del usuario
-    const { data: companiesData, error: companiesError } = await supabase.rpc(
-      'get_user_companies',
-      { user_id: authData.user.id },
-    );
+    // 3. Obtener empresas del usuario (query directa sin join)
+    const { data: userCompanyData, error: userCompanyError } = await supabase
+      .from('user_company')
+      .select('company_id, rol_en_empresa, rut_sii')
+      .eq('user_id', authData.user.id)
+      .eq('activo', true);
 
-    if (companiesError) {
+    if (userCompanyError) {
       return {
         success: false,
-        error: `Companies fetch failed: ${companiesError.message}`,
+        error: `Companies fetch failed: ${userCompanyError.message}`,
       };
     }
+
+    // Obtener datos de empresas
+    const companyIds = (userCompanyData || []).map((uc) => uc.company_id);
+
+    let companiesDetails: any[] = [];
+    if (companyIds.length > 0) {
+      const { data: compData, error: compError } = await supabase
+        .from('companies')
+        .select('id, nombre, rut')
+        .in('id', companyIds)
+        .eq('estado', true);
+
+      if (!compError) {
+        companiesDetails = compData || [];
+      }
+    }
+
+    // Mapear resultado
+    const mappedCompanies = (userCompanyData || [])
+      .map((uc: any) => {
+        const company = companiesDetails.find((c) => c.id === uc.company_id);
+        return {
+          company_id: uc.company_id,
+          company_nombre: company?.nombre,
+          company_rut: company?.rut,
+          rol_en_empresa: uc.rol_en_empresa,
+          rut_sii: uc.rut_sii,
+        };
+      })
+      .filter((c) => c.company_nombre); // Filtrar empresas válidas
 
     return {
       success: true,
       data: {
         user: authData.user,
         profile: profileData as UserProfile,
-        companies: (companiesData || []) as UserCompanyAccess[],
+        companies: mappedCompanies as UserCompanyAccess[],
       },
     };
   } catch (error: any) {
@@ -214,24 +245,55 @@ export async function getCurrentUser(): Promise<
       };
     }
 
-    // Obtener empresas
-    const { data: companiesData, error: companiesError } = await supabase.rpc(
-      'get_user_companies',
-      { user_id: userId },
-    );
+    // Obtener empresas (query directa sin join)
+    const { data: userCompanyData, error: userCompanyError } = await supabase
+      .from('user_company')
+      .select('company_id, rol_en_empresa, rut_sii')
+      .eq('user_id', userId)
+      .eq('activo', true);
 
-    if (companiesError) {
+    if (userCompanyError) {
       return {
         success: false,
-        error: companiesError.message,
+        error: userCompanyError.message,
       };
     }
+
+    // Obtener datos de empresas
+    const companyIds = (userCompanyData || []).map((uc) => uc.company_id);
+
+    let companiesDetails: any[] = [];
+    if (companyIds.length > 0) {
+      const { data: compData, error: compError } = await supabase
+        .from('companies')
+        .select('id, nombre, rut')
+        .in('id', companyIds)
+        .eq('estado', true);
+
+      if (!compError) {
+        companiesDetails = compData || [];
+      }
+    }
+
+    // Mapear resultado
+    const mappedCompanies = (userCompanyData || [])
+      .map((uc: any) => {
+        const company = companiesDetails.find((c) => c.id === uc.company_id);
+        return {
+          company_id: uc.company_id,
+          company_nombre: company?.nombre,
+          company_rut: company?.rut,
+          rol_en_empresa: uc.rol_en_empresa,
+          rut_sii: uc.rut_sii,
+        };
+      })
+      .filter((c) => c.company_nombre);
 
     return {
       success: true,
       data: {
         profile: profileData as UserProfile,
-        companies: (companiesData || []) as UserCompanyAccess[],
+        companies: mappedCompanies as UserCompanyAccess[],
       },
     };
   } catch (error: any) {

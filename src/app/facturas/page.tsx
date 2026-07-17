@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { authService } from '@/api/auth';
+import { getCurrentUser, logoutUser } from '@/api/supabase-auth-v2';
 import { getDTERecibidos } from '@/api/dte';
 import { DTEListItem } from '@/types/dte';
 import { MOCK_DTE_LIST } from '@/utils/mockData';
@@ -21,13 +21,19 @@ export default function FacturasPage() {
       return;
     }
 
-    if (!authService.isAuthenticated()) {
-      router.push('/');
+    checkAuthAndFetch();
+  }, []);
+
+  const checkAuthAndFetch = async () => {
+    const userResult = await getCurrentUser();
+
+    if (!userResult.success) {
+      router.push('/auth');
       return;
     }
 
     fetchFacturas();
-  }, []);
+  };
 
   const fetchFacturas = async () => {
     setLoading(true);
@@ -47,9 +53,9 @@ export default function FacturasPage() {
     setLoading(false);
   };
 
-  const handleLogout = () => {
-    authService.logout();
-    router.push('/');
+  const handleLogout = async () => {
+    await logoutUser();
+    router.push('/auth');
   };
 
   const handlePeriodoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

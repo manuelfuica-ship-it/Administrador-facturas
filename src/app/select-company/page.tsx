@@ -65,12 +65,20 @@ export default function SelectCompanyPage() {
             <h1 className="text-2xl font-bold text-gray-900">DTE Chile</h1>
             <p className="text-sm text-gray-600">Selecciona una empresa</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-          >
-            Salir
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => router.push('/settings')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+            >
+              ⚙️ Configuración
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            >
+              Salir
+            </button>
+          </div>
         </div>
       </nav>
 

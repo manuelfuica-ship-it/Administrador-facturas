@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser, logoutUser } from '@/api/supabase-auth-v2';
-import { getDTERecibidos } from '@/api/dte';
+import { dteSupabaseService } from '@/api/dte-supabase';
 import { DTEListItem } from '@/types/dte';
 import { MOCK_DTE_LIST } from '@/utils/mockData';
 
@@ -39,9 +39,12 @@ export default function FacturasPage() {
     setLoading(true);
     setError('');
 
-    const result = await getDTERecibidos({
+    const companyId = typeof window !== 'undefined' ? sessionStorage.getItem('selectedCompanyId') : null;
+
+    const result = await dteSupabaseService.getDTERecibidos({
       periodo,
       limite: 50,
+      companyId: companyId || undefined,
     });
 
     if (result.success && result.data) {

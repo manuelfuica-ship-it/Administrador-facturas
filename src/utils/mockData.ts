@@ -207,3 +207,91 @@ export const MOCK_DTE_DETAIL: DTE = {
   </SetDTE>
 </EnvioDTE>`,
 };
+
+/**
+ * Obtiene un DTE mock basado en el folio
+ * Busca en MOCK_DTE_LIST y retorna un DTE completo con datos del folio especificado
+ */
+export function getMockDTEByFolio(folioNumber: number): DTE {
+  const listItem = MOCK_DTE_LIST.find((item) => item.folio === folioNumber);
+
+  if (!listItem) {
+    return MOCK_DTE_DETAIL;
+  }
+
+  // Construir XML dinámico explícitamente
+  let xmlContent = '<?xml version="1.0" encoding="ISO-8859-1"?>\n';
+  xmlContent += '<EnvioDTE version="1.0">\n';
+  xmlContent += '  <SetDTE ID="SetDTE_1">\n';
+  xmlContent += '    <Caratula version="1.0">\n';
+  xmlContent += `      <RutEmisor>${listItem.rutEmisor}</RutEmisor>\n`;
+  xmlContent += `      <RutEnvia>${listItem.rutEmisor}</RutEnvia>\n`;
+  xmlContent += `      <RutReceptor>${MOCK_DTE_DETAIL.rutReceptor}</RutReceptor>\n`;
+  xmlContent += '      <FchResol>2023-01-01</FchResol>\n';
+  xmlContent += '      <NroResol>80</NroResol>\n';
+  xmlContent += `      <TmstFirma>${listItem.fechaEmision}T14:35:00</TmstFirma>\n`;
+  xmlContent += '      <Periodo>202607</Periodo>\n';
+  xmlContent += '    </Caratula>\n';
+  xmlContent += '    <DTE version="1.0">\n';
+  xmlContent += `      <Documento ID="F${folioNumber}">\n`;
+  xmlContent += '        <Encabezado>\n';
+  xmlContent += '          <IdDoc>\n';
+  xmlContent += `            <TipoDTE>${listItem.tipoDTE}</TipoDTE>\n`;
+  xmlContent += `            <Folio>${folioNumber}</Folio>\n`;
+  xmlContent += `            <FchEmis>${listItem.fechaEmision}</FchEmis>\n`;
+  xmlContent += '            <FmaPago>1</FmaPago>\n';
+  xmlContent += '            <MntBruto/>\n';
+  xmlContent += '          </IdDoc>\n';
+  xmlContent += '          <Emisor>\n';
+  xmlContent += `            <RUTEmisor>${listItem.rutEmisor}</RUTEmisor>\n`;
+  xmlContent += `            <RznSoc>${listItem.razonSocialEmisor}</RznSoc>\n`;
+  xmlContent += '            <GiroEmis>Comercio general</GiroEmis>\n';
+  xmlContent += '            <Acteco>4611</Acteco>\n';
+  xmlContent += `            <DirOrigen>${MOCK_DTE_DETAIL.direccionEmisor}</DirOrigen>\n`;
+  xmlContent += `            <CmnaOrigen>${MOCK_DTE_DETAIL.comunaEmisor}</CmnaOrigen>\n`;
+  xmlContent += `            <CiudadOrigen>${MOCK_DTE_DETAIL.ciudadEmisor}</CiudadOrigen>\n`;
+  xmlContent += '          </Emisor>\n';
+  xmlContent += '          <Receptor>\n';
+  xmlContent += `            <RUTRecep>${MOCK_DTE_DETAIL.rutReceptor}</RUTRecep>\n`;
+  xmlContent += `            <RznSocRecep>${MOCK_DTE_DETAIL.razonSocialReceptor}</RznSocRecep>\n`;
+  xmlContent += `            <GiroRecep>${MOCK_DTE_DETAIL.giroReceptor}</GiroRecep>\n`;
+  xmlContent += `            <DirRecep>${MOCK_DTE_DETAIL.direccionReceptor}</DirRecep>\n`;
+  xmlContent += `            <CmnaRecep>${MOCK_DTE_DETAIL.comunaReceptor}</CmnaRecep>\n`;
+  xmlContent += `            <CiudadRecep>${MOCK_DTE_DETAIL.ciudadReceptor}</CiudadRecep>\n`;
+  xmlContent += '          </Receptor>\n';
+  xmlContent += '        </Encabezado>\n';
+  xmlContent += '        <Detalle>\n';
+  xmlContent += '          <Item><NroLinDet>1</NroLinDet><NmbItem>Artículos de consumo - Categoría A</NmbItem><QtyItem>100</QtyItem><UnmdItem>UN</UnmdItem><PrcItem>500</PrcItem><MontoItem>47500</MontoItem></Item>\n';
+  xmlContent += '          <Item><NroLinDet>2</NroLinDet><NmbItem>Artículos de consumo - Categoría B</NmbItem><QtyItem>50</QtyItem><UnmdItem>UN</UnmdItem><PrcItem>750</PrcItem><MontoItem>37500</MontoItem></Item>\n';
+  xmlContent += '          <Item><NroLinDet>3</NroLinDet><NmbItem>Gastos de despacho</NmbItem><QtyItem>1</QtyItem><UnmdItem>GLB</UnmdItem><PrcItem>15000</PrcItem><MontoItem>15000</MontoItem></Item>\n';
+  xmlContent += '        </Detalle>\n';
+  xmlContent += '        <Totales>\n';
+  xmlContent += '          <MntNeto>100000</MntNeto>\n';
+  xmlContent += '          <MntExe/>\n';
+  xmlContent += '          <TasaIVA>19</TasaIVA>\n';
+  xmlContent += '          <IVA>19000</IVA>\n';
+  xmlContent += `          <MntTotal>${listItem.montoTotal}</MntTotal>\n`;
+  xmlContent += '        </Totales>\n';
+  xmlContent += '      </Documento>\n';
+  xmlContent += '    </DTE>\n';
+  xmlContent += '  </SetDTE>\n';
+  xmlContent += '</EnvioDTE>';
+
+  // Crear DTE con los datos del folio encontrado
+  const dte: DTE = {
+    ...MOCK_DTE_DETAIL,
+    folio: listItem.folio,
+    fechaEmision: listItem.fechaEmision,
+    razonSocialEmisor: listItem.razonSocialEmisor,
+    rutEmisor: listItem.rutEmisor,
+    tipoDTE: listItem.tipoDTE,
+    montoTotal: listItem.montoTotal,
+    // DEBUG: Agregar folio al nombre del receptor para verificar
+    razonSocialReceptor: `[FOLIO_${folioNumber}] ${MOCK_DTE_DETAIL.razonSocialReceptor}`,
+    xmlOriginal: xmlContent,
+  };
+
+  console.log(`[DEBUG] getMockDTEByFolio(${folioNumber}) returning DTE with folio=${dte.folio}`);
+
+  return dte;
+}

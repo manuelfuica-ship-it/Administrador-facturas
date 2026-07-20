@@ -2,14 +2,14 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "env": [
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "NEXT_PUBLIC_BASEAPI_URL",
-    "BASEAPI_API_KEY",
-    "SESSION_SECRET",
-    "NEXT_PUBLIC_SESSION_TIMEOUT"
-  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "URL de Supabase",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "Llave anónima de Supabase",
+    "NEXT_PUBLIC_BASEAPI_URL": "URL base de BaseAPI",
+    "BASEAPI_API_KEY": "API Key de BaseAPI",
+    "SESSION_SECRET": "Secret para sesiones",
+    "NEXT_PUBLIC_SESSION_TIMEOUT": "Timeout de sesión"
+  },
   "regions": ["sfo1"],
   "functions": {
     "api/**/*.ts": {

@@ -21,25 +21,46 @@ class DTESupabaseService {
   /**
    * Obtiene las credenciales SII del usuario para una empresa
    */
-  async getCompanyCredentials(companyId: string) {
+  async getCompanyCredentials(companyId: string, userId?: string) {
     try {
-      const { data: session } = await supabase.auth.getSession();
+      // Si se proporciona userId, usarlo; si no, obtenerlo de sesión
+      let finalUserId = userId;
 
-      if (!session?.user) {
-        return { success: false, error: 'No authenticated user' };
+      if (!finalUserId) {
+        const { data: session } = await supabase.auth.getSession();
+
+        if (!session?.user) {
+          console.error('[DTE] No authenticated user');
+          return { success: false, error: 'No authenticated user' };
+        }
+
+        finalUserId = session.user.id;
       }
+
+      console.log('[DTE] Getting credentials for user:', finalUserId, 'company:', companyId);
 
       // Obtener credenciales del usuario para esta empresa
       const { data, error } = await supabase
         .from('user_company')
         .select('rut_sii, credenciales_sii_encriptadas')
-        .eq('user_id', session.user.id)
+        .eq('user_id', finalUserId)
         .eq('company_id', companyId)
         .single();
 
-      if (error || !data) {
-        return { success: false, error: 'Credentials not found' };
+      if (error) {
+        console.error('[DTE] Error fetching credentials:', error);
+        return { success: false, error: `Query error: ${error.message}` };
       }
+
+      if (!data) {
+        console.error('[DTE] No data returned from query');
+        return { success: false, error: 'Credentials not found in database' };
+      }
+
+      console.log('[DTE] Credentials found:', {
+        rut_sii: data.rut_sii,
+        has_credentials: !!data.credenciales_sii_encriptadas
+      });
 
       return {
         success: true,
@@ -49,6 +70,7 @@ class DTESupabaseService {
         },
       };
     } catch (error: any) {
+      console.error('[DTE] Exception:', error);
       return { success: false, error: error.message };
     }
   }
@@ -179,9 +201,9 @@ class DTESupabaseService {
   /**
    * Obtiene XML de un DTE específico
    */
-  async getDTEXml(folio: number, companyId: string): Promise<ApiResponse<string>> {
+  async getDTEXml(folio: number, companyId: string, userId?: string): Promise<ApiResponse<string>> {
     try {
-      const credsResult = await this.getCompanyCredentials(companyId);
+      const credsResult = await this.getCompanyCredentials(companyId, userId);
 
       if (!credsResult.success) {
         return { success: false, error: 'No credentials found' };

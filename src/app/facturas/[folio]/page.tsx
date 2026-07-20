@@ -35,10 +35,11 @@ export default function FacturaDetailPage({ params }: { params: { folio: string 
       return;
     }
 
-    fetchDTE();
+    const userId = userResult.data?.profile?.id;
+    fetchDTE(userId);
   };
 
-  const fetchDTE = async () => {
+  const fetchDTE = async (userId?: string) => {
     setLoading(true);
     setError('');
 
@@ -46,7 +47,8 @@ export default function FacturaDetailPage({ params }: { params: { folio: string 
 
     const xmlResult = await dteSupabaseService.getDTEXml(
       parseInt(params.folio),
-      companyId || ''
+      companyId || '',
+      userId
     );
 
     if (!xmlResult.success || !xmlResult.data) {

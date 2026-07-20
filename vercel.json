@@ -1,0 +1,47 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "env": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_BASEAPI_URL",
+    "BASEAPI_API_KEY",
+    "SESSION_SECRET",
+    "NEXT_PUBLIC_SESSION_TIMEOUT"
+  ],
+  "envDescription": {
+    "NEXT_PUBLIC_SUPABASE_URL": "URL de Supabase (pública)",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "Llave anónima de Supabase (pública)",
+    "NEXT_PUBLIC_BASEAPI_URL": "URL base de BaseAPI (pública)",
+    "BASEAPI_API_KEY": "API Key de BaseAPI (secreto)",
+    "SESSION_SECRET": "Secret para sesiones (secreto, mín 32 caracteres)",
+    "NEXT_PUBLIC_SESSION_TIMEOUT": "Timeout de sesión en ms (pública)"
+  },
+  "regions": ["sfo1"],
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}

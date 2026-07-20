@@ -1,0 +1,160 @@
+2026-07-20 13:03:40 -04:00:  ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+2026-07-20 13:06:07 -04:00:  ⚠ ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:06:07 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:06:07 -04:00: 
+2026-07-20 13:06:07 -04:00: Import trace for requested module:
+2026-07-20 13:06:07 -04:00: ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:06:07 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:06:07 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:07 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:07 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:07 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:07 -04:00: 
+2026-07-20 13:06:07 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:06:07 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:06:07 -04:00: 
+2026-07-20 13:06:07 -04:00: Import trace for requested module:
+2026-07-20 13:06:07 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:06:07 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:06:07 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:07 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:07 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:07 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:07 -04:00: 
+2026-07-20 13:06:07 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:06:07 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/fontkit'
+2026-07-20 13:06:07 -04:00: 
+2026-07-20 13:06:07 -04:00: Import trace for requested module:
+2026-07-20 13:06:07 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:06:07 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:07 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:07 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:07 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:07 -04:00: Error generating PDF: Error: ENOENT: no such file or directory, open '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/.next/server/vendor-chunks/data/Helvetica.afm'
+2026-07-20 13:06:07 -04:00:     at Object.readFileSync (node:fs:441:20)
+2026-07-20 13:06:07 -04:00:     at Object.Helvetica (webpack-internal:///(rsc)/./node_modules/pdfkit/js/pdfkit.es5.js:3482:54)
+2026-07-20 13:06:07 -04:00:     at new StandardFont (webpack-internal:///(rsc)/./node_modules/pdfkit/js/pdfkit.es5.js:3527:56)
+2026-07-20 13:06:07 -04:00:     at PDFFontFactory.open (webpack-internal:///(rsc)/./node_modules/pdfkit/js/pdfkit.es5.js:3907:18)
+2026-07-20 13:06:07 -04:00:     at PDFDocument.font (webpack-internal:///(rsc)/./node_modules/pdfkit/js/pdfkit.es5.js:3981:33)
+2026-07-20 13:06:07 -04:00:     at PDFDocument.initFonts (webpack-internal:///(rsc)/./node_modules/pdfkit/js/pdfkit.es5.js:3944:12)
+2026-07-20 13:06:07 -04:00:     at new PDFDocument (webpack-internal:///(rsc)/./node_modules/pdfkit/js/pdfkit.es5.js:6788:11)
+2026-07-20 13:06:07 -04:00:     at new DTEPDFRenderer (webpack-internal:///(rsc)/./src/renderer/pdfRenderer.ts:31:20)
+2026-07-20 13:06:07 -04:00:     at renderDTE (webpack-internal:///(rsc)/./src/renderer/pdfRenderer.ts:273:22)
+2026-07-20 13:06:07 -04:00:     at POST (webpack-internal:///(rsc)/./src/app/api/generate-pdf/route.ts:19:91)
+2026-07-20 13:06:07 -04:00:     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-07-20 13:06:07 -04:00:     at async /Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+2026-07-20 13:06:07 -04:00:     at async eT.execute (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+2026-07-20 13:06:07 -04:00:     at async eT.handle (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+2026-07-20 13:06:07 -04:00:     at async doRender (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/base-server.js:1366:42)
+2026-07-20 13:06:07 -04:00:     at async cacheEntry.responseCache.get.routeKind (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/base-server.js:1588:28)
+2026-07-20 13:06:07 -04:00:     at async DevServer.renderToResponseWithComponentsImpl (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/base-server.js:1496:28)
+2026-07-20 13:06:07 -04:00:     at async DevServer.renderPageComponent (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/base-server.js:1924:24)
+2026-07-20 13:06:07 -04:00:     at async DevServer.renderToResponseImpl (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/base-server.js:1962:32)
+2026-07-20 13:06:07 -04:00:     at async DevServer.pipeImpl (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/base-server.js:922:25)
+2026-07-20 13:06:07 -04:00:     at async NextNodeServer.handleCatchallRenderRequest (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/next-server.js:272:17)
+2026-07-20 13:06:07 -04:00:     at async DevServer.handleRequestImpl (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/base-server.js:818:17)
+2026-07-20 13:06:07 -04:00:     at async /Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+2026-07-20 13:06:07 -04:00:     at async Span.traceAsyncFn (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/trace/trace.js:154:20)
+2026-07-20 13:06:07 -04:00:     at async DevServer.handleRequest (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+2026-07-20 13:06:07 -04:00:     at async invokeRender (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/lib/router-server.js:179:21)
+2026-07-20 13:06:07 -04:00:     at async handleRequest (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/lib/router-server.js:359:24)
+2026-07-20 13:06:07 -04:00:     at async requestHandlerImpl (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/lib/router-server.js:383:13)
+2026-07-20 13:06:07 -04:00:     at async Server.requestListener (/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+2026-07-20 13:06:07 -04:00:   errno: -2,
+2026-07-20 13:06:07 -04:00:   code: 'ENOENT',
+2026-07-20 13:06:07 -04:00:   syscall: 'open',
+2026-07-20 13:06:07 -04:00:   path: '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/.next/server/vendor-chunks/data/Helvetica.afm'
+2026-07-20 13:06:07 -04:00: }
+2026-07-20 13:06:12 -04:00:  ⚠ ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:06:12 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: Import trace for requested module:
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:12 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:12 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:12 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:06:12 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: Import trace for requested module:
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:12 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:12 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:12 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:06:12 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/fontkit'
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: Import trace for requested module:
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:12 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:12 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:12 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:12 -04:00:  ⚠ ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:06:12 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: Import trace for requested module:
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:12 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:12 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:12 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:06:12 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: Import trace for requested module:
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:06:12 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:12 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:12 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:12 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:06:12 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/fontkit'
+2026-07-20 13:06:12 -04:00: 
+2026-07-20 13:06:12 -04:00: Import trace for requested module:
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:06:12 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:06:12 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:06:12 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:06:12 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:08:54 -04:00:  ⚠ ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:08:54 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:08:54 -04:00: 
+2026-07-20 13:08:54 -04:00: Import trace for requested module:
+2026-07-20 13:08:54 -04:00: ./node_modules/restructure/src/DecodeStream.js
+2026-07-20 13:08:54 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:08:54 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:08:54 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:08:54 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:08:54 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:08:54 -04:00: 
+2026-07-20 13:08:54 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:08:54 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/restructure/src'
+2026-07-20 13:08:54 -04:00: 
+2026-07-20 13:08:54 -04:00: Import trace for requested module:
+2026-07-20 13:08:54 -04:00: ./node_modules/restructure/src/EncodeStream.js
+2026-07-20 13:08:54 -04:00: ./node_modules/restructure/index.js
+2026-07-20 13:08:54 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:08:54 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:08:54 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:08:54 -04:00: ./src/app/api/generate-pdf/route.ts
+2026-07-20 13:08:54 -04:00: 
+2026-07-20 13:08:54 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:08:54 -04:00: Module not found: Can't resolve 'iconv-lite' in '/Users/manuelfuica/Library/CloudStorage/GoogleDrive-manuel.fuica@gmail.com/Mi unidad/Claude-Work/PROYECTOS/dte-chile-app/node_modules/fontkit'
+2026-07-20 13:08:54 -04:00: 
+2026-07-20 13:08:54 -04:00: Import trace for requested module:
+2026-07-20 13:08:54 -04:00: ./node_modules/fontkit/iconv-lite.cjs
+2026-07-20 13:08:54 -04:00: ./node_modules/fontkit/dist/module.mjs
+2026-07-20 13:08:54 -04:00: ./node_modules/pdfkit/js/pdfkit.es5.js
+2026-07-20 13:08:54 -04:00: ./src/renderer/pdfRenderer.ts
+2026-07-20 13:08:54 -04:00: ./src/app/api/generate-pdf/route.ts

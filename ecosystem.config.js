@@ -3,11 +3,12 @@ module.exports = {
     {
       name: 'dte-app',
       script: 'npm',
-      args: 'run dev',
+      args: 'run dev -- -p 3001',
       instances: 1,
       exec_mode: 'fork',
       env: {
-        NODE_ENV: 'development'
+        NODE_ENV: 'development',
+        PORT: 3001
       },
       // Reiniciar automáticamente si la app crashea
       autorestart: true,

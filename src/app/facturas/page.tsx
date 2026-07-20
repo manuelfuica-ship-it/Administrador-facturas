@@ -86,12 +86,20 @@ export default function FacturasPage() {
       <nav className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">DTE Chile - Facturas Recibidas</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-          >
-            Salir
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => router.push('/select-company')}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+            >
+              ← Cambiar Empresa
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            >
+              Salir
+            </button>
+          </div>
         </div>
       </nav>
 

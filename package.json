@@ -15,8 +15,10 @@
     "axios": "^1.6.0",
     "fast-xml-parser": "^4.3.0",
     "jsbarcode": "^3.11.5",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "next": "^14.0.0",
-    "pdfkit": "^0.13.0",
+    "pdfkit": "^0.19.1",
     "postcss": "^8.4.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -30,6 +32,7 @@
     "@types/react": "^18.2.0",
     "eslint": "^8.50.0",
     "eslint-config-next": "^14.0.0",
-    "pm2": "^7.0.3"
+    "pm2": "^7.0.3",
+    "vercel": "^56.4.1"
   }
 }

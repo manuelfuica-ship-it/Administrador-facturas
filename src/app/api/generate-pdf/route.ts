@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid DTE data' }, { status: 400 });
     }
 
-    const pdfBuffer = renderDTE(dte);
+    const pdfBuffer = await renderDTE(dte);
 
     if (pdfBuffer.length > 500 * 1024) {
       console.warn(`PDF size warning: ${(pdfBuffer.length / 1024).toFixed(2)}KB`);

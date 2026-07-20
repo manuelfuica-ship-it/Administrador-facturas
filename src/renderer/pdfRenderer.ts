@@ -38,22 +38,31 @@ export class DTEPDFRenderer {
     this.currentY = this.margin;
   }
 
-  render(dte: DTE): Buffer {
-    this.renderHeader(dte);
-    this.renderDocumentType(dte);
-    this.renderReceptorData(dte);
-    this.renderDetailTable(dte);
-    this.renderTotals(dte);
-    this.renderReceiptAcknowledgment(dte);
-    this.renderBarcode(dte);
+  render(dte: DTE): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.renderHeader(dte);
+        this.renderDocumentType(dte);
+        this.renderReceptorData(dte);
+        this.renderDetailTable(dte);
+        this.renderTotals(dte);
+        this.renderReceiptAcknowledgment(dte);
+        this.renderBarcode(dte);
 
-    const buffers: Buffer[] = [];
-    this.doc.on('data', (chunk) => buffers.push(chunk));
-    this.doc.on('end', () => {});
+        const buffers: Buffer[] = [];
+        this.doc.on('data', (chunk) => buffers.push(chunk));
+        this.doc.on('end', () => {
+          resolve(Buffer.concat(buffers));
+        });
+        this.doc.on('error', (err) => {
+          reject(err);
+        });
 
-    this.doc.end();
-
-    return Buffer.concat(buffers);
+        this.doc.end();
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   private renderHeader(dte: DTE): void {
@@ -298,7 +307,7 @@ export class DTEPDFRenderer {
   }
 }
 
-export function renderDTE(dte: DTE): Buffer {
+export async function renderDTE(dte: DTE): Promise<Buffer> {
   const renderer = new DTEPDFRenderer();
   return renderer.render(dte);
 }

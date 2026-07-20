@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { supabase } from '@/lib/supabase';
 import { DTEListItem, ApiResponse } from '@/types/dte';
-import { MOCK_DTE_LIST } from '@/utils/mockData';
+import { MOCK_DTE_LIST, MOCK_DTE_DETAIL } from '@/utils/mockData';
 
 interface DTEQuery {
   periodo?: string;
@@ -210,7 +210,7 @@ class DTESupabaseService {
         // Fallback a mock data si no hay credenciales
         return {
           success: true,
-          data: `<DTE>Mock XML para folio ${folio}</DTE>`,
+          data: MOCK_DTE_DETAIL.xmlOriginal,
         };
       }
 
@@ -224,7 +224,7 @@ class DTESupabaseService {
         // Fallback a mock data si falla BaseAPI
         return {
           success: true,
-          data: `<DTE>Mock XML para folio ${folio}</DTE>`,
+          data: MOCK_DTE_DETAIL.xmlOriginal,
         };
       }
 

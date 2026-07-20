@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       console.warn(`PDF size warning: ${(pdfBuffer.length / 1024).toFixed(2)}KB`);
     }
 
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(Buffer.from(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

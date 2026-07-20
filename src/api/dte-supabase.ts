@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { supabase } from '@/lib/supabase';
 import { DTEListItem, ApiResponse } from '@/types/dte';
-import { MOCK_DTE_LIST, MOCK_DTE_DETAIL } from '@/utils/mockData';
+import { MOCK_DTE_LIST, MOCK_DTE_DETAIL, getMockDTEByFolio } from '@/utils/mockData';
 
 interface DTEQuery {
   periodo?: string;
@@ -27,14 +27,14 @@ class DTESupabaseService {
       let finalUserId = userId;
 
       if (!finalUserId) {
-        const { data: session } = await supabase.auth.getSession();
+        const { data } = await supabase.auth.getSession();
 
-        if (!session?.user) {
+        if (!data?.session?.user) {
           console.error('[DTE] No authenticated user');
           return { success: false, error: 'No authenticated user' };
         }
 
-        finalUserId = session.user.id;
+        finalUserId = data.session.user.id;
       }
 
       console.log('[DTE] Getting credentials for user:', finalUserId, 'company:', companyId);
@@ -132,7 +132,7 @@ class DTESupabaseService {
       // Obtener credenciales del usuario
       const credsResult = await this.getCompanyCredentials(query.companyId);
 
-      if (!credsResult.success) {
+      if (!credsResult.success || !credsResult.data) {
         console.warn('No company credentials found, using mock data');
         return {
           success: true,
@@ -199,18 +199,19 @@ class DTESupabaseService {
   }
 
   /**
-   * Obtiene XML de un DTE específico
+   * Obtiene un DTE específico
    */
-  async getDTEXml(folio: number, companyId: string, userId?: string): Promise<ApiResponse<string>> {
+  async getDTE(folio: number, companyId: string, userId?: string): Promise<ApiResponse<any>> {
     try {
       const credsResult = await this.getCompanyCredentials(companyId, userId);
 
-      if (!credsResult.success) {
-        console.warn('[DTE] No credentials, using mock data');
+      if (!credsResult.success || !credsResult.data) {
+        console.warn('[DTE] No credentials, using mock data for folio', folio);
         // Fallback a mock data si no hay credenciales
+        const mockDte = getMockDTEByFolio(folio);
         return {
           success: true,
-          data: MOCK_DTE_DETAIL.xmlOriginal,
+          data: mockDte,
         };
       }
 
@@ -220,11 +221,12 @@ class DTESupabaseService {
       const token = await this.getBaseApiToken(rutSii, claveSii);
 
       if (!token) {
-        console.warn('[DTE] Could not authenticate with BaseAPI, using mock data');
+        console.warn('[DTE] Could not authenticate with BaseAPI, using mock data for folio', folio);
         // Fallback a mock data si falla BaseAPI
+        const mockDte = getMockDTEByFolio(folio);
         return {
           success: true,
-          data: MOCK_DTE_DETAIL.xmlOriginal,
+          data: mockDte,
         };
       }
 
@@ -238,16 +240,16 @@ class DTESupabaseService {
 
       const response = await client.get(`/dte/recibidos/${folio}`);
 
-      if (response.data?.xml) {
+      if (response.data) {
         return {
           success: true,
-          data: response.data.xml,
+          data: response.data,
         };
       }
 
       return {
         success: false,
-        error: 'XML not found in response',
+        error: 'DTE not found in response',
       };
     } catch (error: any) {
       return {

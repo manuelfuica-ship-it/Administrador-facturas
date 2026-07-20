@@ -63,10 +63,8 @@ export default function AuthPage() {
     const result = await registerUser(
       regEmail,
       regPassword,
-      rut,
       nombre,
       apellido,
-      empresa,
     );
 
     if (result.success) {

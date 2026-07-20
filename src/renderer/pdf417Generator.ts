@@ -1,12 +1,10 @@
-import PDFDocument from 'pdfkit';
-
 export interface PDF417Options {
   width?: number;
   height?: number;
 }
 
 export class PDF417Generator {
-  static embedBarcode(doc: PDFDocument, tedData: string, x: number, y: number, width: number = 50, height: number = 20): void {
+  static embedBarcode(doc: any, tedData: string, x: number, y: number, width: number = 50, height: number = 20): void {
     try {
       const cleanData = formatTED(tedData);
 

@@ -1,6 +1,6 @@
-import PDFDocument from 'pdfkit';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { DTE } from '@/types/dte';
-import { PDF417Generator, formatTED } from './pdf417Generator';
 
 const DTE_NAMES: Record<number, string> = {
   33: 'FACTURA ELECTRÓNICA',
@@ -12,29 +12,23 @@ const DTE_NAMES: Record<number, string> = {
   46: 'FACTURA DE COMPRA ELECTRÓNICA',
 };
 
-const PAYMENT_TYPES: Record<number, string> = {
-  1: 'Contado',
-  2: 'Crédito',
-  3: 'Sin costo',
-};
-
 export class DTEPDFRenderer {
-  doc: PDFDocument;
+  doc: jsPDF;
   pageWidth: number;
   pageHeight: number;
   margin: number;
   currentY: number;
 
   constructor() {
-    this.doc = new PDFDocument({
-      size: 'letter',
-      margin: 40,
-      bufferPages: true,
+    this.doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'letter',
     });
 
-    this.pageWidth = this.doc.page.width;
-    this.pageHeight = this.doc.page.height;
-    this.margin = 40;
+    this.pageWidth = this.doc.internal.pageSize.getWidth();
+    this.pageHeight = this.doc.internal.pageSize.getHeight();
+    this.margin = 10;
     this.currentY = this.margin;
   }
 
@@ -42,23 +36,13 @@ export class DTEPDFRenderer {
     return new Promise((resolve, reject) => {
       try {
         this.renderHeader(dte);
-        this.renderDocumentType(dte);
-        this.renderReceptorData(dte);
+        this.renderEmitterInfo(dte);
         this.renderDetailTable(dte);
         this.renderTotals(dte);
-        this.renderReceiptAcknowledgment(dte);
-        this.renderBarcode(dte);
+        this.renderFooter(dte);
 
-        const buffers: Buffer[] = [];
-        this.doc.on('data', (chunk) => buffers.push(chunk));
-        this.doc.on('end', () => {
-          resolve(Buffer.concat(buffers));
-        });
-        this.doc.on('error', (err) => {
-          reject(err);
-        });
-
-        this.doc.end();
+        const pdfBuffer = Buffer.from(this.doc.output('arraybuffer'));
+        resolve(pdfBuffer);
       } catch (error) {
         reject(error);
       }
@@ -66,244 +50,214 @@ export class DTEPDFRenderer {
   }
 
   private renderHeader(dte: DTE): void {
-    const rightX = this.pageWidth - this.margin - 200;
+    const w = this.pageWidth - this.margin * 2;
 
-    this.doc.fontSize(10).font('Helvetica-Bold').text(dte.razonSocialEmisor, rightX, this.currentY, {
-      width: 180,
-      align: 'right',
-    });
+    // Emisor izquierda
+    this.doc.setFontSize(12);
+    this.doc.setFont('Helvetica', 'bold');
+    this.doc.text(dte.razonSocialEmisor, this.margin, this.currentY);
+    this.currentY += 5;
 
-    this.currentY += 18;
-    this.doc.fontSize(8).font('Helvetica').text(`Giro: ${dte.giroEmisor}`, rightX, this.currentY, {
-      width: 180,
-      align: 'right',
-    });
+    this.doc.setFontSize(8);
+    this.doc.setFont('Helvetica', 'normal');
+    this.doc.text(`GIRO: ${dte.giroEmisor}`, this.margin, this.currentY);
+    this.currentY += 3;
+    this.doc.text(`Dirección: ${dte.direccionEmisor}`, this.margin, this.currentY);
+    this.currentY += 3;
+    this.doc.text(`${dte.comunaEmisor}`, this.margin, this.currentY);
 
-    this.currentY += 12;
-    this.doc.fontSize(8).text(`${dte.direccionEmisor}, ${dte.comunaEmisor}`, rightX, this.currentY, {
-      width: 180,
-      align: 'right',
-    });
+    // Documento derecha con recuadro rojo profesional
+    const boxX = this.pageWidth - this.margin - 80;
+    const boxY = this.currentY - 11;
+    const boxW = 80;
+    const boxH = 26;
 
-    this.currentY += 12;
-    this.doc.fontSize(8).text(`RUT: ${dte.rutEmisor}`, rightX, this.currentY, {
-      width: 180,
-      align: 'right',
-    });
+    this.doc.setDrawColor(255, 0, 0);
+    this.doc.setLineWidth(1.5);
+    this.doc.rect(boxX, boxY, boxW, boxH);
 
-    this.currentY += 12;
-    this.doc.fontSize(8).text(`Fecha: ${dte.fechaEmision}`, rightX, this.currentY, {
-      width: 180,
-      align: 'right',
-    });
+    // RUT adentro arriba
+    this.doc.setTextColor(255, 0, 0);
+    this.doc.setFontSize(8);
+    this.doc.setFont('Helvetica', 'bold');
+    this.doc.text(`R.U.T.: ${dte.rutEmisor}`, boxX + boxW / 2, boxY + 4, { align: 'center' });
 
+    // Tipo de documento centrado
+    this.doc.setFontSize(11);
+    this.doc.setFont('Helvetica', 'bold');
+    this.doc.text(DTE_NAMES[dte.tipoDTE] || 'DTE', boxX + boxW / 2, boxY + 11, { align: 'center' });
+
+    // Folio
+    this.doc.setFontSize(10);
+    this.doc.text(`N° ${dte.folio}`, boxX + boxW / 2, boxY + 17, { align: 'center' });
+
+    // Texto abajo - Ciudad del emisor
+    this.doc.setFontSize(7);
+    const ciudadText = `S.I.I. - ${(dte.ciudadEmisor || 'SANTIAGO').toUpperCase()}`;
+    this.doc.text(ciudadText, boxX + boxW / 2, boxY + 22, { align: 'center' });
+
+    this.doc.setTextColor(0, 0, 0);
     this.currentY += 20;
   }
 
-  private renderDocumentType(dte: DTE): void {
-    const boxY = this.currentY;
-    const boxHeight = 30;
-    const rightX = this.pageWidth - this.margin - 200;
-    const boxWidth = 180;
+  private renderEmitterInfo(dte: DTE): void {
+    const w = this.pageWidth - this.margin * 2;
 
-    this.doc.rect(rightX, boxY, boxWidth, boxHeight).stroke();
+    // Tabla de información
+    const infoData = [
+      [
+        { content: 'R.U.T', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: dte.rutReceptor, styles: { fontSize: 7 } },
+        { content: 'FECHA EMISIÓN', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: dte.fechaEmision, styles: { fontSize: 7 } },
+      ],
+      [
+        { content: 'NOMBRE', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: dte.razonSocialReceptor, styles: { fontSize: 7 } },
+        { content: 'EMAIL', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: '', styles: { fontSize: 7 } },
+      ],
+      [
+        { content: 'GIRO', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: dte.giroReceptor || '-', styles: { fontSize: 7 } },
+        { content: 'HUESPED', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: '', styles: { fontSize: 7 } },
+      ],
+      [
+        { content: 'DIRECCIÓN', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: dte.direccionReceptor || '', styles: { fontSize: 7 } },
+        { content: 'N° RESERVA', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: '', styles: { fontSize: 7 } },
+      ],
+      [
+        { content: 'COMUNA', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: dte.comunaReceptor || '', styles: { fontSize: 7 } },
+        { content: 'CAJERO', styles: { fontStyle: 'bold', fontSize: 7 } },
+        { content: '', styles: { fontSize: 7 } },
+      ],
+    ];
 
-    this.doc.fontSize(11).font('Helvetica-Bold').text(DTE_NAMES[dte.tipoDTE] || 'DTE', rightX + 5, boxY + 3, {
-      width: boxWidth - 10,
-      align: 'center',
-    });
+    autoTable(this.doc, {
+      startY: this.currentY,
+      body: infoData as any,
+      columnStyles: {
+        0: { cellWidth: w * 0.15 },
+        1: { cellWidth: w * 0.35 },
+        2: { cellWidth: w * 0.15 },
+        3: { cellWidth: w * 0.35 },
+      },
+      margin: { left: this.margin, right: this.margin },
+      cellPadding: 1.5,
+    } as any);
 
-    this.doc.fontSize(9).font('Helvetica').text(`Folio N°: ${dte.folio}`, rightX + 5, boxY + 15, {
-      width: boxWidth - 10,
-      align: 'center',
-    });
-
-    this.currentY = boxY + boxHeight + 10;
-  }
-
-  private renderReceptorData(dte: DTE): void {
-    this.doc.fontSize(9).font('Helvetica-Bold').text('RECEPTOR:', this.margin, this.currentY);
-    this.currentY += 12;
-
-    this.doc.fontSize(8).font('Helvetica').text(`RUT: ${dte.rutReceptor}`, this.margin + 10, this.currentY);
-    this.currentY += 10;
-
-    this.doc.text(`Razón Social: ${dte.razonSocialReceptor}`, this.margin + 10, this.currentY);
-    this.currentY += 10;
-
-    if (dte.giroReceptor) {
-      this.doc.text(`Giro: ${dte.giroReceptor}`, this.margin + 10, this.currentY);
-      this.currentY += 10;
-    }
-
-    if (dte.direccionReceptor) {
-      this.doc.text(`Dirección: ${dte.direccionReceptor}`, this.margin + 10, this.currentY);
-      this.currentY += 10;
-    }
-
-    if (dte.comunaReceptor) {
-      this.doc.text(
-        `Comuna: ${dte.comunaReceptor}${dte.ciudadReceptor ? ', ' + dte.ciudadReceptor : ''}`,
-        this.margin + 10,
-        this.currentY,
-      );
-      this.currentY += 10;
-    }
-
-    this.doc.text(`Forma de Pago: ${PAYMENT_TYPES[dte.formaPago]}`, this.margin + 10, this.currentY);
-    this.currentY += 10;
-
-    if (dte.fechaVencimiento && dte.formaPago === 2) {
-      this.doc.text(`Fecha Vencimiento: ${dte.fechaVencimiento}`, this.margin + 10, this.currentY);
-      this.currentY += 10;
-    }
-
-    this.currentY += 8;
+    this.currentY = (this.doc as any).lastAutoTable.finalY + 3;
   }
 
   private renderDetailTable(dte: DTE): void {
-    const tableY = this.currentY;
-    const rowHeight = 12;
-    const headerHeight = 14;
-    const colWidths = [30, 12, 180, 30, 30, 40];
-    const totalColWidth = colWidths.reduce((a, b) => a + b, 0);
-    const startX = this.margin;
+    const w = this.pageWidth - this.margin * 2;
 
-    this.doc.fontSize(7).font('Helvetica-Bold');
+    // Tabla de detalles
+    const rows = dte.items.map((item) => [
+      { content: item.nombreItem, styles: { fontSize: 8 } },
+      { content: item.montoItem.toLocaleString('es-CL'), styles: { fontSize: 8, halign: 'right' } },
+    ]);
 
-    const headers = ['Cantidad', 'Unid', 'Descripción', 'P. Unit', 'Desc', 'Total'];
-    let currentX = startX;
+    autoTable(this.doc, {
+      startY: this.currentY,
+      head: [['DESCRIPCIÓN', 'TOTAL']],
+      body: rows as any,
+      headStyles: {
+        fillColor: [80, 80, 80],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 8,
+      },
+      bodyStyles: { fontSize: 8 },
+      columnStyles: {
+        0: { halign: 'left' },
+        1: { halign: 'right', cellWidth: 40 },
+      },
+      margin: { left: this.margin, right: this.margin },
+      lineWidth: 0.2,
+    } as any);
 
-    this.doc.rect(startX, tableY, totalColWidth, headerHeight).stroke();
-
-    for (let i = 0; i < headers.length; i++) {
-      this.doc.text(headers[i], currentX + 2, tableY + 2, {
-        width: colWidths[i] - 4,
-        align: i === 2 ? 'left' : 'right',
-        height: headerHeight - 4,
-      });
-      currentX += colWidths[i];
-    }
-
-    let detailY = tableY + headerHeight;
-    this.doc.fontSize(7).font('Helvetica');
-
-    for (const item of dte.items) {
-      const itemHeight = rowHeight;
-
-      this.doc.rect(startX, detailY, totalColWidth, itemHeight).stroke();
-
-      currentX = startX;
-      const values = [
-        item.cantidad?.toString() || '1',
-        item.unidad || '',
-        item.nombreItem,
-        item.precioUnitario?.toLocaleString('es-CL') || '',
-        item.descuentoMonto ? `-${item.descuentoMonto.toLocaleString('es-CL')}` : '',
-        item.montoItem.toLocaleString('es-CL'),
-      ];
-
-      for (let i = 0; i < values.length; i++) {
-        this.doc.text(values[i], currentX + 2, detailY + 2, {
-          width: colWidths[i] - 4,
-          align: i === 2 ? 'left' : 'right',
-          height: itemHeight - 4,
-        });
-        currentX += colWidths[i];
-      }
-
-      detailY += itemHeight;
-    }
-
-    this.currentY = detailY + 8;
+    this.currentY = (this.doc as any).lastAutoTable.finalY + 4;
   }
 
   private renderTotals(dte: DTE): void {
-    const rightX = this.pageWidth - this.margin - 120;
-    const labelWidth = 60;
-    const valueWidth = 60;
+    const w = this.pageWidth - this.margin * 2;
+    const tableWidth = 70; // Ancho de la tabla de totales
+    const tableX = this.pageWidth - this.margin - tableWidth; // Alineada a la derecha
 
-    this.doc.fontSize(8).font('Helvetica');
+    // Construir las filas de la tabla de totales
+    const totalsData: any[] = [];
 
-    if (dte.montoExento) {
-      this.doc.text('Total Exento:', rightX - labelWidth, this.currentY, { width: labelWidth, align: 'right' });
-      this.doc.text(dte.montoExento.toLocaleString('es-CL'), rightX, this.currentY, {
-        width: valueWidth,
-        align: 'right',
-      });
-      this.currentY += 10;
+    // Monto Exento
+    if (dte.montoExento && dte.montoExento > 0) {
+      totalsData.push([
+        { content: 'MONTO EXENTO', styles: { fontSize: 7, fontStyle: 'bold' } },
+        { content: `$${dte.montoExento.toLocaleString('es-CL')}`, styles: { fontSize: 7, halign: 'right' } },
+      ]);
     }
 
+    // Monto Neto (Afecto)
     if (dte.montoNeto) {
-      this.doc.text('Subtotal Neto:', rightX - labelWidth, this.currentY, { width: labelWidth, align: 'right' });
-      this.doc.text(dte.montoNeto.toLocaleString('es-CL'), rightX, this.currentY, {
-        width: valueWidth,
-        align: 'right',
-      });
-      this.currentY += 10;
+      totalsData.push([
+        { content: 'MONTO NETO', styles: { fontSize: 7, fontStyle: 'bold' } },
+        { content: `$${dte.montoNeto.toLocaleString('es-CL')}`, styles: { fontSize: 7, halign: 'right' } },
+      ]);
     }
 
+    // IVA
     if (dte.iva && dte.tasaIVA) {
-      this.doc.font('Helvetica-Bold');
-      this.doc.text(`IVA (${dte.tasaIVA}%):`, rightX - labelWidth, this.currentY, { width: labelWidth, align: 'right' });
-      this.doc.text(dte.iva.toLocaleString('es-CL'), rightX, this.currentY, {
-        width: valueWidth,
-        align: 'right',
-      });
-      this.doc.font('Helvetica');
-      this.currentY += 10;
+      totalsData.push([
+        { content: `${dte.tasaIVA}% I.V.A`, styles: { fontSize: 7, fontStyle: 'bold' } },
+        { content: `$${dte.iva.toLocaleString('es-CL')}`, styles: { fontSize: 7, halign: 'right' } },
+      ]);
     }
 
-    this.doc.font('Helvetica-Bold').fontSize(10);
-    this.doc.text('TOTAL:', rightX - labelWidth, this.currentY, { width: labelWidth, align: 'right' });
-    this.doc.text(dte.montoTotal.toLocaleString('es-CL'), rightX, this.currentY, {
-      width: valueWidth,
-      align: 'right',
-    });
+    // Monto Total
+    totalsData.push([
+      { content: 'MONTO TOTAL', styles: { fontSize: 8, fontStyle: 'bold', fillColor: [200, 200, 200] } },
+      { content: `$${dte.montoTotal.toLocaleString('es-CL')}`, styles: { fontSize: 8, fontStyle: 'bold', halign: 'right', fillColor: [200, 200, 200] } },
+    ]);
 
-    this.currentY += 12;
-    this.doc.font('Helvetica').fontSize(8);
+    // Renderizar tabla de totales alineada a la derecha
+    autoTable(this.doc, {
+      startY: this.currentY,
+      body: totalsData as any,
+      columnStyles: {
+        0: { cellWidth: tableWidth * 0.55 },
+        1: { cellWidth: tableWidth * 0.45 },
+      },
+      margin: { left: tableX, right: this.margin },
+      lineWidth: 0.2,
+      cellPadding: 2,
+      didDrawPage: (data: any) => {
+        this.currentY = (this.doc as any).lastAutoTable.finalY + 2;
+      }
+    } as any);
+
+    this.currentY = (this.doc as any).lastAutoTable.finalY + 4;
   }
 
-  private renderReceiptAcknowledgment(dte: DTE): void {
-    if (![33, 34].includes(dte.tipoDTE)) {
-      return;
-    }
+  private renderFooter(dte: DTE): void {
+    const barcodeY = this.pageHeight - this.margin - 20;
 
-    this.currentY += 10;
+    // Barcode placeholder
+    this.doc.setDrawColor(0, 0, 0);
+    this.doc.setLineWidth(0.5);
+    this.doc.rect(this.margin, barcodeY, 40, 15);
 
-    const boxWidth = 200;
-    const boxHeight = 50;
+    this.doc.setFontSize(6);
+    this.doc.setFont('Helvetica', 'bold');
+    this.doc.text('TIMBRE', this.margin + 20, barcodeY + 7.5, { align: 'center' });
+    this.doc.text('ELECTRÓNICO', this.margin + 20, barcodeY + 11, { align: 'center' });
 
-    this.doc.rect(this.margin, this.currentY, boxWidth, boxHeight).stroke();
-
-    this.doc.fontSize(8).font('Helvetica-Bold').text('ACUSE DE RECIBO', this.margin + 5, this.currentY + 3, {
-      width: boxWidth - 10,
-      align: 'center',
-    });
-
-    this.doc.fontSize(7).font('Helvetica');
-
-    this.doc.text('Nombre: _________________________', this.margin + 5, this.currentY + 15);
-    this.doc.text('RUT: _______________  Fecha: __________', this.margin + 5, this.currentY + 25);
-    this.doc.text('Recinto: _________________________', this.margin + 5, this.currentY + 35);
-
-    this.currentY += boxHeight + 10;
-  }
-
-  private renderBarcode(dte: DTE): void {
-    const barcodeY = this.pageHeight - this.margin - 30;
-    const barcodeX = this.margin;
-    const barcodeWidth = 40;
-    const barcodeHeight = 20;
-
-    try {
-      const tedData = formatTED(dte.ted);
-      PDF417Generator.embedBarcode(this.doc, tedData, barcodeX, barcodeY, barcodeWidth, barcodeHeight);
-    } catch (error) {
-      console.error('Error rendering barcode:', error);
-      this.doc.fontSize(6).text('[TIMBRE]', barcodeX, barcodeY);
-    }
+    // Información de SII
+    this.doc.setFontSize(7);
+    this.doc.setFont('Helvetica', 'normal');
+    this.doc.text('Timbre Electrónico SII', this.margin, barcodeY - 2);
   }
 }
 

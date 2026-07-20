@@ -18,12 +18,6 @@ export default function FacturaDetailPage({ params }: { params: { folio: string 
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem('testMode')) {
-      setDte(MOCK_DTE_DETAIL);
-      setLoading(false);
-      return;
-    }
-
     checkAuthAndFetch();
   }, []);
 
@@ -45,34 +39,26 @@ export default function FacturaDetailPage({ params }: { params: { folio: string 
 
     const companyId = typeof window !== 'undefined' ? sessionStorage.getItem('selectedCompanyId') : null;
 
-    const xmlResult = await dteSupabaseService.getDTEXml(
+    const dteResult = await dteSupabaseService.getDTE(
       parseInt(params.folio),
       companyId || '',
       userId
     );
 
-    if (!xmlResult.success || !xmlResult.data) {
-      setError(xmlResult.error || 'Error al cargar la factura');
+    if (!dteResult.success || !dteResult.data) {
+      setError(dteResult.error || 'Error al cargar la factura');
       setLoading(false);
       return;
     }
 
-    const parsedDte = parseXmlDte(xmlResult.data);
-
-    if (!parsedDte) {
-      setError('Error al procesar el XML de la factura');
-      setLoading(false);
-      return;
-    }
-
-    const validation = validateDte(parsedDte);
+    const validation = validateDte(dteResult.data);
     if (!validation.valid) {
       setError(`Errores en validación: ${validation.errors.join(', ')}`);
       setLoading(false);
       return;
     }
 
-    setDte(parsedDte);
+    setDte(dteResult.data);
     setLoading(false);
   };
 

@@ -2,6 +2,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
+  "skipRenderingPages": ["/auth", "/facturas", "/select-company", "/settings"],
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "URL de Supabase",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "Llave anónima de Supabase",

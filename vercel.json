@@ -1,6 +1,12 @@
 {
   "buildCommand": "npm run build",
   "framework": "nextjs",
+  "skipRenderingPages": [
+    "/auth",
+    "/facturas",
+    "/select-company",
+    "/settings"
+  ],
   "headers": [
     {
       "source": "/(.*)",

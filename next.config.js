@@ -1,13 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  pageExtensions: ['ts', 'tsx'],
-  webpack: (config, { isServer }) => {
-    config.module.rules.push({
-      test: /\.node$/,
-      loader: 'node-loader',
-    });
-    return config;
+  swcMinify: true,
+  experimental: {
+    isrMemoryCacheSize: 0, // Disable ISR cache during builds
   },
 };
 

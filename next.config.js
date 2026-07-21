@@ -2,8 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  output: 'standalone', // Build as standalone server, not static export
   experimental: {
-    isrMemoryCacheSize: 0, // Disable ISR cache during builds
+    isrMemoryCacheSize: 0,
   },
 };
 
